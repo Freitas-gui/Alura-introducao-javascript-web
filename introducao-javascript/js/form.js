@@ -4,17 +4,24 @@ buttomAdd.addEventListener("click", function(event){
     event.preventDefault()
     
     var form = document.querySelector("#form-add")
-    var paciente = obtePacienteDoForm(form)
+    var paciente = obtemPacienteDoForm(form)
 
     var pacienteTr = montaTr(paciente)
 
     var tabelaPacientes = document.querySelector("#tabela-pacientes")
-    tabelaPacientes.appendChild(pacienteTr)
+    if( validaPaciente(paciente).length > 0 )
+        listaErros(validaPaciente(paciente))
+    else{
+        var mensagemErro = document.querySelector("#mensagem-erro")
+        mensagemErro.innerHTML = ""
+        tabelaPacientes.appendChild(pacienteTr)
+        
+    }
 
     form.reset()
 })
 
-function obtePacienteDoForm(form){
+function obtemPacienteDoForm(form){
     var paciente = {
         nome: form.nome.value,
         peso : form.peso.value,
@@ -45,3 +52,26 @@ function montaTd(dado, classe){
 
     return td
 }
+
+function validaPaciente(paciente){
+    var erros = []
+    erros = validaCamposVazios(paciente, erros)
+    
+    if( !validaPeso(paciente.peso ))
+        erros.push( "Peso inválido" )
+    if ( !validaAltura(paciente.altura) )
+        erros.push( "Altura inválida" )
+
+    return erros
+}
+
+function listaErros(erros){
+    var mensagemErro = document.querySelector("#mensagem-erro")
+    mensagemErro.innerHTML = ""
+    erros.forEach(function (erro) {
+        var li = document.createElement("li")
+        li.textContent = erro
+        mensagemErro.appendChild(li)
+    });
+}
+
